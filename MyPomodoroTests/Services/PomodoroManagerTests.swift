@@ -31,14 +31,6 @@ final class PomodoroManagerStartTests: XCTestCase {
         wait(for: [exp], timeout: 1.0)
     }
     
-//    func test_startPomodoro_whenPomodoroIsPausedInTheMiddle_shouldStopCountingDown() {
-//        let (sut, exp) = makeSut(pomodoro: Pomodoro(state: .running, seconds: 5), expectationFulfillment: 1)
-//
-//        sut.start { pomodoro in
-//        } receivingValue: { pomodoro in
-//            exp.fulfill()
-//        }
-//    }
     // MARK: - Helpers
     
     func makeSut(pomodoro: Pomodoro, expectationFulfillment: Int) -> (PomodoroManager, XCTestExpectation) {
