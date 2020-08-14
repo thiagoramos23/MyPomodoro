@@ -11,7 +11,25 @@ import SwiftUI
 struct MyPomodoroApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            MainView(pomodoroManager: createPomodoroManager())
         }
+    }
+}
+
+extension MyPomodoroApp {
+    
+    func createPomodoroManager() -> PomodoroManagerViewModel {
+        let newPomodoro = Pomodoro(state: .running, seconds: 5)
+        return PomodoroManagerViewModel(
+            pomodoroManager: PomodoroManager(
+                pomodoro: newPomodoro,
+                pomodoroTimer: PomodoroTimer(
+                    pomodoro: newPomodoro,
+                    counter: Counter(
+                        interval: TimeInterval(1)
+                    )
+                )
+            )
+        )
     }
 }
