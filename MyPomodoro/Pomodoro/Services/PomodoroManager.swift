@@ -12,6 +12,7 @@ protocol Manager {
     typealias ReceivingValueHandler = (Pomodoro) -> Void
 
     func start(completion: @escaping CompletionHandler, receivingValue: @escaping ReceivingValueHandler)
+    func pause()
 }
 
 public final class PomodoroManager: Manager {
@@ -23,8 +24,11 @@ public final class PomodoroManager: Manager {
         self.pomodoroTimer = pomodoroTimer
     }
     
+    func pause() {
+        self.pomodoro = Pomodoro(state: .paused, seconds: pomodoro.seconds)
+    }
+    
     func start(completion: @escaping CompletionHandler, receivingValue: @escaping ReceivingValueHandler) {
-        // TODO: Add spec for when a client pauses the pomodoro. This should call the completion block.
         self.pomodoroTimer.countdown { pomodoro in
             self.pomodoro = pomodoro
             if pomodoro.isInactive() {

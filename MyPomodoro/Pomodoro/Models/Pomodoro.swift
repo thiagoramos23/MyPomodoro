@@ -51,6 +51,10 @@ public class Pomodoro: Equatable {
         return self.state == .finished
     }
     
+    public func isPaused() -> Bool {
+        return self.state == .paused
+    }
+    
     public func getState() -> PomodoroState {
         return self.state
     }
