@@ -31,33 +31,26 @@ public class Pomodoro: Equatable {
         return Pomodoro(state: .stopped, seconds: self.seconds)
     }
     
-    public func countdown() -> Pomodoro {
-        if self.seconds <= 1 {
-            return Pomodoro(state: .finished, seconds: 0)
-        }
-        
-        return Pomodoro(state: self.state, seconds: self.seconds - 1)
+    public func pause() -> Pomodoro {
+        return Pomodoro(state: .paused, seconds: self.seconds)
     }
     
-    public func isActive() -> Bool {
-        return state == .running && seconds > 0
+    public func finish() -> Pomodoro {
+        return Pomodoro(state: .finished, seconds: self.seconds)
     }
     
-    public func isInactive() -> Bool {
-        return !isActive()
+    public func isNotActive() -> Bool {
+        return state != .running
     }
     
-    public func isFinished() -> Bool {
-        return self.state == .finished
-    }
+//    public func countdown() -> Pomodoro {
+//        if self.seconds <= 1 {
+//            return Pomodoro(state: .finished, seconds: 0)
+//        }
+//
+//        return Pomodoro(state: self.state, seconds: self.seconds - 1)
+//    }
     
-    public func isPaused() -> Bool {
-        return self.state == .paused
-    }
-    
-    public func getState() -> PomodoroState {
-        return self.state
-    }
     
     public static func == (lhs: Pomodoro, rhs: Pomodoro) -> Bool {
         if lhs.state == rhs.state && lhs.seconds == rhs.seconds {
