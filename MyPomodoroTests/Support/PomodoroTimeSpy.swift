@@ -9,23 +9,18 @@ import Foundation
 
 class PomodoroTimerSpy: CountdownTimer {
     var pomodoro: Pomodoro
+    var completionCalls: Int = 0
     
     init(pomodoro: Pomodoro) {
         self.pomodoro = pomodoro
     }
             
     func countdown(completion: @escaping (Pomodoro) -> Void) {
-        while pomodoro.isActive() {
-            pomodoro = pomodoro.countdown()
+        while pomodoro.seconds > 0 {
+            self.completionCalls += 1
+            pomodoro = Pomodoro(state: pomodoro.state, seconds: pomodoro.seconds - 1)
             completion(pomodoro)
         }
         
-        if pomodoro.isPaused() {
-            completion(pomodoro)
-        }
-    }
-    
-    func pausePomodoro() {
-        self.pomodoro = Pomodoro(state: .paused, seconds: self.pomodoro.seconds)
     }
 }

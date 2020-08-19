@@ -30,11 +30,11 @@ public final class PomodoroManager: Manager {
     
     func start(completion: @escaping CompletionHandler, receivingValue: @escaping ReceivingValueHandler) {
         self.pomodoroTimer.countdown { pomodoro in
-            self.pomodoro = pomodoro
-            if pomodoro.isInactive() {
+            if pomodoro.seconds == 0 {
                 completion(pomodoro)
             }
             receivingValue(pomodoro)
+            
         }
     }
     
