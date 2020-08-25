@@ -14,48 +14,30 @@ public enum PomodoroState {
     case paused
 }
 
-public class Pomodoro: Equatable {
+struct Pomodoro {
     private(set) var state: PomodoroState
-    private(set) var seconds: Int
     
-    public init(state: PomodoroState = .stopped, seconds: Int = 1500) {
+    public init(state: PomodoroState = .stopped) {
         self.state   = state
-        self.seconds = seconds
     }
     
     public func start() -> Pomodoro {
-        return Pomodoro(state: .running, seconds: self.seconds)
+        return Pomodoro(state: .running)
     }
     
     public func stop() -> Pomodoro {
-        return Pomodoro(state: .stopped, seconds: self.seconds)
+        return Pomodoro(state: .stopped)
     }
     
     public func pause() -> Pomodoro {
-        return Pomodoro(state: .paused, seconds: self.seconds)
+        return Pomodoro(state: .paused)
     }
     
     public func finish() -> Pomodoro {
-        return Pomodoro(state: .finished, seconds: self.seconds)
+        return Pomodoro(state: .finished)
     }
     
-    public func isNotActive() -> Bool {
+    public func isNotRuning() -> Bool {
         return state != .running
-    }
-    
-//    public func countdown() -> Pomodoro {
-//        if self.seconds <= 1 {
-//            return Pomodoro(state: .finished, seconds: 0)
-//        }
-//
-//        return Pomodoro(state: self.state, seconds: self.seconds - 1)
-//    }
-    
-    
-    public static func == (lhs: Pomodoro, rhs: Pomodoro) -> Bool {
-        if lhs.state == rhs.state && lhs.seconds == rhs.seconds {
-            return true
-        }
-        return false
     }
 }
