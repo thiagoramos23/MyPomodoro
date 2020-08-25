@@ -19,14 +19,12 @@ struct MyPomodoroApp: App {
 extension MyPomodoroApp {
     
     func createPomodoroManager() -> PomodoroManagerViewModel {
-        let newPomodoro = Pomodoro(state: .running, seconds: 5)
         return PomodoroManagerViewModel(
             pomodoroManager: PomodoroManager(
-                pomodoro: newPomodoro,
                 pomodoroTimer: PomodoroTimer(
-                    pomodoro: newPomodoro,
+                    timeInSeconds: 1500,
                     counter: Counter(
-                        interval: TimeInterval(1)
+                        interval: 1
                     )
                 )
             )
