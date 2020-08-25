@@ -8,8 +8,8 @@
 import Foundation
 
 protocol Manager {
-    typealias CompletionHandler = (Pomodoro) -> Void
-    typealias ReceivingValueHandler = (Pomodoro) -> Void
+    typealias CompletionHandler = (TimeInterval) -> Void
+    typealias ReceivingValueHandler = (TimeInterval) -> Void
 
     func start(completion: @escaping CompletionHandler, receivingValue: @escaping ReceivingValueHandler)
     func pause()
@@ -17,24 +17,26 @@ protocol Manager {
 
 public final class PomodoroManager: Manager {
     private var pomodoroTimer: CountdownTimer
-    private var pomodoro: Pomodoro
+    private var pomodoro: Pomodoro = Pomodoro(state: .stopped)
     
-    init(pomodoro: Pomodoro, pomodoroTimer: CountdownTimer) {
-        self.pomodoro      = pomodoro
+    init(pomodoroTimer: CountdownTimer) {
         self.pomodoroTimer = pomodoroTimer
     }
     
     func pause() {
-        self.pomodoro = Pomodoro(state: .paused, seconds: pomodoro.seconds)
+        self.pomodoro = Pomodoro(state: .paused)
+        self.pomodoroTimer.stop()
     }
-    
+        
     func start(completion: @escaping CompletionHandler, receivingValue: @escaping ReceivingValueHandler) {
-        self.pomodoroTimer.countdown { pomodoro in
-            if self.pomodoro.isNotActive() || pomodoro.seconds == 0 {
-                self.pomodoroTimer.stop()
-                completion(pomodoro)
+        guard self.pomodoro.isNotRuning() else { return }
+        
+        self.pomodoro = Pomodoro(state: .running)
+        self.pomodoroTimer.countdown { timeInterval in
+            if timeInterval == 0 {
+                completion(timeInterval)
             } else {
-                receivingValue(pomodoro)
+                receivingValue(timeInterval)
             }
         }
     }

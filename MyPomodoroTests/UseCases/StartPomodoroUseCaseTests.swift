@@ -8,13 +8,13 @@
 import XCTest
 @testable import MyPomodoro
 
-final class StartPomodoroTests: XCTestCase {
+final class StartPomodoroUseCaseTests: XCTestCase {
     
     func test_startPomodoro_shouldStartCounterAndReceiveValuesForTheSpecifiedAmountOfSeconds() {
-        let (sut, timerSpy, exp) = makeSut(pomodoro: Pomodoro(state: .running, seconds: 5), fulfillmentExpectationCount: 4, expectationMessage: "When pomodoro is couting down")
+        let (sut, timerSpy, exp) = makeSut(seconds: 5, fulfillmentExpectationCount: 4, expectationMessage: "When pomodoro is couting down")
         
         sut.start { _ in
-        } receivingValue: { pomodoro in
+        } receivingValue: { _ in
             exp.fulfill()
         }
         
@@ -23,9 +23,9 @@ final class StartPomodoroTests: XCTestCase {
     }
     
     func test_startPomodoro_whenPomodoroIsCountingDown_shouldcallCompletionWhenFinishes() {
-        let (sut, timerSpy, exp) = makeSut(pomodoro: Pomodoro(state: .running, seconds: 5), fulfillmentExpectationCount: 1, expectationMessage: "When pomodoro finishes")
+        let (sut, timerSpy, exp) = makeSut(seconds: 5, fulfillmentExpectationCount: 1, expectationMessage: "When pomodoro finishes")
         
-        sut.start { pomodoro in
+        sut.start { _ in
             exp.fulfill()
         } receivingValue: { _ in
         }
@@ -34,27 +34,30 @@ final class StartPomodoroTests: XCTestCase {
         wait(for: [exp], timeout: 1.0)
     }
     
-    func test_startPomodoro_whenPomodoroChangesState_shouldCallCompletionAndStopCountdown() {
-        let pomodoro = Pomodoro(state: .running, seconds: 5)
-        let (sut, timerSpy, exp) = makeSut(pomodoro: pomodoro, fulfillmentExpectationCount: 1, expectationMessage: "When pomodoro is not in running state")
-        let receiveValueExpectation = expectation(description: "receivingValue for pomodoro")
+    func test_startPomodoro_whileCountdownTimerIsRunning_shouldNotStartNewPomodoro() {
+        let (sut, timerSpy, exp) = makeSut(seconds: 5, fulfillmentExpectationCount: 4, expectationMessage: "When pomodoro is not in running state")
         
-        sut.start { pomodoro in
-            exp.fulfill()
+        let sut2 = sut
+        let exp2 = expectation(description: "should never be called")
+        exp2.isInverted = true
+
+        sut.start { _ in
         } receivingValue: { _ in
-            sut.pause()
-            receiveValueExpectation.fulfill()
+            exp.fulfill()
+            sut2.start { _ in
+            } receivingValue: { _ in
+                exp2.fulfill()
+            }
         }
         
-        XCTAssertEqual(timerSpy.completionCallCount, 2)
-        XCTAssertEqual(timerSpy.stopCallCount, 1)
-        wait(for: [receiveValueExpectation, exp], timeout: 1.0)
+        XCTAssertEqual(timerSpy.completionCallCount, 5)
+        wait(for: [exp2, exp], timeout: 1.0)
     }
         
     // MARK: - Helpers
-    func makeSut(pomodoro: Pomodoro, fulfillmentExpectationCount: Int, expectationMessage: String = "When testing pomodoro") -> (PomodoroManager, PomodoroTimerSpy, XCTestExpectation) {
-        let timerSpy        = PomodoroTimerSpy(pomodoro: pomodoro)
-        let pomodoroManager = PomodoroManager(pomodoro: pomodoro, pomodoroTimer: timerSpy)
+    func makeSut(seconds: TimeInterval, fulfillmentExpectationCount: Int, expectationMessage: String = "When testing pomodoro") -> (PomodoroManager, PomodoroTimerSpy, XCTestExpectation) {
+        let timerSpy        = PomodoroTimerSpy(seconds: seconds)
+        let pomodoroManager = PomodoroManager(pomodoroTimer: timerSpy)
         let exp = expectation(description: expectationMessage)
         exp.expectedFulfillmentCount = fulfillmentExpectationCount
         return (pomodoroManager, timerSpy, exp)

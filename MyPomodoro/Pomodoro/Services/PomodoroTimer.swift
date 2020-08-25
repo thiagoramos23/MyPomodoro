@@ -8,25 +8,41 @@
 import Foundation
 
 protocol CountdownTimer {
-    func countdown(completion: @escaping (Pomodoro) -> Void)
+    func countdown(completion: @escaping (TimeInterval) -> Void)
     func stop()
 }
 
 class PomodoroTimer: CountdownTimer  {
-    var pomodoro: Pomodoro
+    var timeInSeconds: TimeInterval
     var counter: InternalCounter
 
-    init(pomodoro: Pomodoro, counter: InternalCounter) {
-        self.pomodoro = pomodoro
+    init(timeInSeconds: TimeInterval, counter: InternalCounter) {
+        self.timeInSeconds = timeInSeconds
         self.counter  = counter
     }
+        
+    func countdown(completion: @escaping (TimeInterval) -> Void) {
+        self.counter.dispatchEventHandler = { [unowned self] in
+            completion(self.subtract(seconds: 1))
+            self.stopWhenReachesZeroSeconds()
+        }
 
-    func countdown(completion: @escaping (Pomodoro) -> Void) {
-//        self.counter.dispatchEventHandler = {
-//        }
-//
-//        self.counter.resume()
+        self.counter.resume()
     }
     
-    func stop() {}
+    func stop() {
+        self.counter.suspend()
+    }
+    
+    fileprivate func subtract(seconds: Int) -> TimeInterval {
+        self.timeInSeconds -= 1
+        return self.timeInSeconds
+    }
+
+    fileprivate func stopWhenReachesZeroSeconds() {
+        if self.timeInSeconds == 0 {
+            self.stop()
+        }
+    }
+
 }

@@ -11,20 +11,38 @@ import XCTest
 class PausePomodoroUseCaseTests: XCTestCase {
         
     func test_pausePomodoro_shouldChangeStateToPaused() {
-        let pomodoro = Pomodoro(state: .running, seconds: 5)
-        let sut = makeSut(pomodoro: pomodoro)
+        let (sut, timerSpy) = makeSut(seconds: 5)
         
         sut.pause()
         
-        XCTAssertEqual(PomodoroState.paused, pomodoro.state)   
+        XCTAssertEqual(timerSpy.stopCallCount, 1)
+    }
+    
+    func test_pausePomodoro_whenPomodoroIsRunning_shouldStopPomodoro() {
+        let (sut, timerSpy) = makeSut(seconds: 5)
+        let exp = expectation(description: "pomodoro should never call complete")
+        exp.isInverted = true
+        
+        let receiveValueExpectation = expectation(description: "receivingValue should be calling once")
+        receiveValueExpectation.expectedFulfillmentCount = 1
+        
+        sut.start { _ in
+            exp.fulfill()
+        } receivingValue: { _ in
+            sut.pause()
+            receiveValueExpectation.fulfill()
+        }
+        
+        XCTAssertEqual(timerSpy.stopCallCount, 1)
+        wait(for: [receiveValueExpectation, exp], timeout: 1.0)
     }
     
     
     // MARK: - Helpers
-    func makeSut(pomodoro: Pomodoro) -> PomodoroManager {
-        let timerSpy        = PomodoroTimerSpy(pomodoro: pomodoro)
-        let pomodoroManager = PomodoroManager(pomodoro: pomodoro, pomodoroTimer: timerSpy)
-        return pomodoroManager
+    func makeSut(seconds: TimeInterval) -> (PomodoroManager, PomodoroTimerSpy) {
+        let timerSpy        = PomodoroTimerSpy(seconds: seconds)
+        let pomodoroManager = PomodoroManager(pomodoroTimer: timerSpy)
+        return (pomodoroManager, timerSpy)
     }
 
 }
