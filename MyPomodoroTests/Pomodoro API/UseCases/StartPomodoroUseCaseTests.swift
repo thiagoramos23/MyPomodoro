@@ -60,6 +60,14 @@ final class StartPomodoroUseCaseTests: XCTestCase {
         let pomodoroManager = PomodoroManager(pomodoroTimer: timerSpy)
         let exp = expectation(description: expectationMessage)
         exp.expectedFulfillmentCount = fulfillmentExpectationCount
+        verifyMemoryLeak(pomodoroManager)
         return (pomodoroManager, timerSpy, exp)
     }
+    
+    private func verifyMemoryLeak(_ instance: AnyObject, file: StaticString = #filePath, line: UInt = #line) {
+        addTeardownBlock { [weak instance] in
+            XCTAssertNil(instance, "Should have dealocated after test", file: file, line: line)
+        }
+    }
+
 }

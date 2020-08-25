@@ -40,8 +40,8 @@ class PomodoroTimerTests: XCTestCase {
         let exp = expectation(description: "Should not keep calling countdown")
         exp.expectedFulfillmentCount = 1
         
-        sut.countdown { time in
-            sut.stop()
+        sut.countdown { [weak sut] time in
+            sut?.stop()
             exp.fulfill()
         }
         
@@ -52,8 +52,16 @@ class PomodoroTimerTests: XCTestCase {
     private func makeSut(seconds: Int) -> (PomodoroTimer, CounterSpy) {
         let spy = CounterSpy(interval: TimeInterval(1))
         let sut = PomodoroTimer(timeInSeconds: TimeInterval(seconds), counter: spy)
+        verifyMemoryLeak(sut)
         return (sut, spy)
     }
+    
+    private func verifyMemoryLeak(_ instance: AnyObject, file: StaticString = #filePath, line: UInt = #line) {
+        addTeardownBlock { [weak instance] in
+            XCTAssertNil(instance, "Should have dealocated after test", file: file, line: line)
+        }
+    }
+
     
     class CounterSpy: InternalCounter {
         var isSuspended = false

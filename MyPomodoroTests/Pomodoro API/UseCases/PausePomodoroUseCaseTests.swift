@@ -42,7 +42,15 @@ class PausePomodoroUseCaseTests: XCTestCase {
     func makeSut(seconds: TimeInterval) -> (PomodoroManager, PomodoroTimerSpy) {
         let timerSpy        = PomodoroTimerSpy(seconds: seconds)
         let pomodoroManager = PomodoroManager(pomodoroTimer: timerSpy)
+        verifyMemoryLeak(pomodoroManager)
         return (pomodoroManager, timerSpy)
     }
+    
+    private func verifyMemoryLeak(_ instance: AnyObject, file: StaticString = #filePath, line: UInt = #line) {
+        addTeardownBlock { [weak instance] in
+            XCTAssertNil(instance, "Should have dealocated after test", file: file, line: line)
+        }
+    }
+
 
 }

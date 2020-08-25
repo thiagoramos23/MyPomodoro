@@ -22,9 +22,9 @@ class PomodoroTimer: CountdownTimer  {
     }
         
     func countdown(completion: @escaping (TimeInterval) -> Void) {
-        self.counter.dispatchEventHandler = { [unowned self] in
-            completion(self.subtract(seconds: 1))
-            self.stopWhenReachesZeroSeconds()
+        self.counter.dispatchEventHandler = { [weak self] in
+            completion(self?.subtract(seconds: 1) ?? 0)
+            self?.stopWhenReachesZeroSeconds()
         }
 
         self.counter.resume()
