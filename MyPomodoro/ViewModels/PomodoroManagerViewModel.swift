@@ -17,11 +17,11 @@ class PomodoroManagerViewModel: ObservableObject {
     }
     
     func start() {
-        pomodoroManager.start { pomodoro in
+        pomodoroManager.start { timeInterval in
             print("Pomodoro is finished")
-        } receivingValue: { pomodoro in
+        } receivingValue: { timeInterval in
             DispatchQueue.main.async {
-                let seconds = pomodoro.seconds
+                let seconds = Int(timeInterval)
                 let formattedMinutes = String(format: "%02d", (seconds % 3600) / 60)
                 let formattedSeconds = String(format: "%02d", (seconds % 60))
                 self.timerString = "\(formattedMinutes):\(formattedSeconds)"
