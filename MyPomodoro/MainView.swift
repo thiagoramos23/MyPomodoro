@@ -35,6 +35,16 @@ struct MainView: View {
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
-        MainView(pomodoroManager: PomodoroManagerViewModel(pomodoroManager: PomodoroManager(pomodoro: Pomodoro(), pomodoroTimer: PomodoroTimer(pomodoro: Pomodoro(state: .running, seconds: 1500), counter: Counter(interval: TimeInterval(1))))))
+        MainView(pomodoroManager:
+            PomodoroManagerViewModel(pomodoroManager:
+            PomodoroManager(
+                pomodoroTimer:
+                    PomodoroTimer(
+                        timeInSeconds: 1500,
+                        counter: Counter(interval: 1)
+                    )
+                )
+            )
+        )
     }
 }
