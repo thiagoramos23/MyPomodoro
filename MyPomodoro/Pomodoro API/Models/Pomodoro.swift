@@ -9,9 +9,8 @@ import Foundation
 
 public enum PomodoroState {
     case running
-    case finished
     case stopped
-    case paused
+    case finished
 }
 
 struct Pomodoro {
@@ -28,16 +27,16 @@ struct Pomodoro {
     public func stop() -> Pomodoro {
         return Pomodoro(state: .stopped)
     }
-    
-    public func pause() -> Pomodoro {
-        return Pomodoro(state: .paused)
-    }
-    
+        
     public func finish() -> Pomodoro {
         return Pomodoro(state: .finished)
     }
     
+    public func isRunning() -> Bool {
+        return state == .running
+    }
+    
     public func isNotRuning() -> Bool {
-        return state != .running
+        return !isRunning()
     }
 }

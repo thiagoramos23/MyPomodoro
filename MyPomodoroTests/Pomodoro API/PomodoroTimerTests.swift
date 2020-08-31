@@ -49,6 +49,24 @@ class PomodoroTimerTests: XCTestCase {
         XCTAssertEqual(spy.stopCallCount, 1)
     }
     
+    func test_reset_shouldMakeCounterResetToTheAmountOfSecondsBeforeStarted() {
+        let (sut, spy) = makeSut(seconds: 10)
+        sut.countdown { [weak sut] time in
+            sut?.reset()
+        }
+        
+        let exp = expectation(description: "When starting counting again after reset")
+        exp.expectedFulfillmentCount = 10
+        sut.countdown { timer in
+            exp.fulfill()
+        }
+
+        wait(for: [exp], timeout: 1.0)
+        
+        XCTAssertEqual(spy.stopCallCount, 2)
+        XCTAssertEqual(spy.dispatchCallCount, 11)
+    }
+    
     private func makeSut(seconds: Int) -> (PomodoroTimer, CounterSpy) {
         let spy = CounterSpy(interval: TimeInterval(1))
         let sut = PomodoroTimer(timeInSeconds: TimeInterval(seconds), counter: spy)
@@ -77,6 +95,7 @@ class PomodoroTimerTests: XCTestCase {
         }
                         
         func resume() {
+            self.isSuspended = false
             while !isSuspended {
                 self.dispatchEventHandler?()
                 self.dispatchCallCount += 1

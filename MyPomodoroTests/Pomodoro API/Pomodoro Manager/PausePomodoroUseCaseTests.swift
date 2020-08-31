@@ -10,9 +10,13 @@ import XCTest
 
 class PausePomodoroUseCaseTests: XCTestCase {
         
-    func test_pausePomodoro_shouldChangeStateToPaused() {
+    func test_pausePomodoro_shouldCallStopInTimer() {
         let (sut, timerSpy) = makeSut(seconds: 5)
-        
+        sut.start { _ in
+        } receivingValue: { _ in
+
+        }
+
         sut.pause()
         
         XCTAssertEqual(timerSpy.stopCallCount, 1)
@@ -37,6 +41,12 @@ class PausePomodoroUseCaseTests: XCTestCase {
         wait(for: [receiveValueExpectation, exp], timeout: 1.0)
     }
     
+    func test_pausePomodoro_whenPomodoroIsNotRunning_shouldNotCallStopInTheTimer() {
+        let (sut, timerSpy) = makeSut(seconds: 5)
+        sut.pause()
+        
+        XCTAssertEqual(timerSpy.stopCallCount, 0)
+    }
     
     // MARK: - Helpers
     func makeSut(seconds: TimeInterval) -> (PomodoroManager, PomodoroTimerSpy) {

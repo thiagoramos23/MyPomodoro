@@ -10,15 +10,28 @@ import Foundation
 protocol CountdownTimer {
     func countdown(completion: @escaping (TimeInterval) -> Void)
     func stop()
+    func reset()
 }
 
 class PomodoroTimer: CountdownTimer  {
     var timeInSeconds: TimeInterval
     var counter: InternalCounter
+    
+    private var backupTimeInSeconds: TimeInterval
 
     init(timeInSeconds: TimeInterval, counter: InternalCounter) {
         self.timeInSeconds = timeInSeconds
+        self.backupTimeInSeconds = timeInSeconds
         self.counter  = counter
+    }
+    
+    func stop() {
+        self.counter.suspend()
+    }
+    
+    func reset() {
+        self.stop()
+        self.timeInSeconds = self.backupTimeInSeconds
     }
         
     func countdown(completion: @escaping (TimeInterval) -> Void) {
@@ -29,11 +42,7 @@ class PomodoroTimer: CountdownTimer  {
 
         self.counter.resume()
     }
-    
-    func stop() {
-        self.counter.suspend()
-    }
-    
+        
     fileprivate func subtract(seconds: Int) -> TimeInterval {
         self.timeInSeconds -= 1
         return self.timeInSeconds

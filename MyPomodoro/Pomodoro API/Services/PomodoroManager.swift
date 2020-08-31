@@ -13,6 +13,7 @@ protocol Manager {
 
     func start(completion: @escaping CompletionHandler, receivingValue: @escaping ReceivingValueHandler)
     func pause()
+    func reset()
 }
 
 public final class PomodoroManager: Manager {
@@ -24,14 +25,21 @@ public final class PomodoroManager: Manager {
     }
     
     func pause() {
-        self.pomodoro = Pomodoro(state: .paused)
+        guard self.pomodoro.isRunning() else { return }
+        self.pomodoro = self.pomodoro.stop()
         self.pomodoroTimer.stop()
+    }
+    
+    func reset() {
+        guard self.pomodoro.isRunning() else { return }
+        self.pomodoro = self.pomodoro.stop()
+        self.pomodoroTimer.reset()
     }
         
     func start(completion: @escaping CompletionHandler, receivingValue: @escaping ReceivingValueHandler) {
         guard self.pomodoro.isNotRuning() else { return }
         
-        self.pomodoro = Pomodoro(state: .running)
+        self.pomodoro = self.pomodoro.start()
         self.pomodoroTimer.countdown { timeInterval in
             if timeInterval == 0 {
                 completion(timeInterval)
