@@ -43,7 +43,7 @@ class UnpausePomodoroUseCaseTests: XCTestCase {
     // MARK: - Helpers
     func makeSut(seconds: TimeInterval) -> (Manager, PomodoroTimerSpy) {
         let timerSpy        = PomodoroTimerSpy(seconds: seconds)
-        let pomodoroManager = PomodoroManager(pomodoroTimer: timerSpy)
+        let pomodoroManager = PomodoroManager(pomodoroTimer: timerSpy, nextPomodoroType: PomodoroType.breakInterval)
         verifyMemoryLeak(pomodoroManager)
         return (pomodoroManager, timerSpy)
     }

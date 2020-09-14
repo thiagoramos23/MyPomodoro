@@ -97,7 +97,7 @@
 		6E9DFD2724F4A37000C987B5 /* Pomodoro API */ = {
 			isa = PBXGroup;
 			children = (
-				6EABFDF024E0921C00D6E71C /* Pomodoro Manager */,
+				6EABFDF024E0921C00D6E71C /* Work Pomodoro */,
 				6E177D7124E241D90021403B /* PomodoroTimerTests.swift */,
 				6E9DFD2524F49B8300C987B5 /* CounterTests.swift */,
 			);
@@ -173,7 +173,7 @@
 			path = ViewModels;
 			sourceTree = "<group>";
 		};
-		6EABFDF024E0921C00D6E71C /* Pomodoro Manager */ = {
+		6EABFDF024E0921C00D6E71C /* Work Pomodoro */ = {
 			isa = PBXGroup;
 			children = (
 				6EABFDF124E0923000D6E71C /* StartPomodoroUseCaseTests.swift */,
@@ -182,7 +182,7 @@
 				6EC43EA024FC566200017A38 /* ResetPomodoroUseCaseTests.swift */,
 				6EC43EA224FC839700017A38 /* FinishPomodoroUseCaseTests.swift */,
 			);
-			path = "Pomodoro Manager";
+			path = "Work Pomodoro";
 			sourceTree = "<group>";
 		};
 		6EABFDF624E092C500D6E71C /* Pomodoro API */ = {

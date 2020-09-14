@@ -37,12 +37,13 @@ struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
         MainView(pomodoroManager:
             PomodoroManagerViewModel(pomodoroManager:
-            PomodoroManager(
-                pomodoroTimer:
-                    PomodoroTimer(
-                        timeInSeconds: 1500,
-                        counter: Counter(interval: 1)
-                    )
+                PomodoroManager(
+                    pomodoroTimer:
+                        PomodoroTimer(
+                            timeInSeconds: 1500,
+                            counter: Counter(interval: 1)
+                        ),
+                    nextPomodoroType: PomodoroType.breakInterval
                 )
             )
         )

@@ -13,6 +13,11 @@ public enum PomodoroState {
     case finished
 }
 
+public enum PomodoroType: Equatable {
+    case workInterval
+    case breakInterval
+}
+
 struct Pomodoro {
     private(set) var state: PomodoroState
     

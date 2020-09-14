@@ -57,7 +57,7 @@ final class StartPomodoroUseCaseTests: XCTestCase {
     // MARK: - Helpers
     func makeSut(seconds: TimeInterval, fulfillmentExpectationCount: Int, expectationMessage: String = "When testing pomodoro") -> (PomodoroManager, PomodoroTimerSpy, XCTestExpectation) {
         let timerSpy        = PomodoroTimerSpy(seconds: seconds)
-        let pomodoroManager = PomodoroManager(pomodoroTimer: timerSpy)
+        let pomodoroManager = PomodoroManager(pomodoroTimer: timerSpy, nextPomodoroType: PomodoroType.breakInterval)
         let exp = expectation(description: expectationMessage)
         exp.expectedFulfillmentCount = fulfillmentExpectationCount
         verifyMemoryLeak(pomodoroManager)

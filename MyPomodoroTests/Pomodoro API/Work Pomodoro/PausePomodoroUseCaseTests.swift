@@ -10,16 +10,19 @@ import XCTest
 
 class PausePomodoroUseCaseTests: XCTestCase {
         
-    func test_pausePomodoro_shouldCallStopInTimer() {
+    func test_pausePomodoro_whenIsNotRunning_shouldNotCallStopInTimer() {
         let (sut, timerSpy) = makeSut(seconds: 5)
+        let exp = expectation(description: "To wait finish to call pause")
         sut.start { _ in
+            exp.fulfill()
         } receivingValue: { _ in
-
         }
 
+        wait(for: [exp], timeout: 1.0)
+        
         sut.pause()
         
-        XCTAssertEqual(timerSpy.stopCallCount, 1)
+        XCTAssertEqual(timerSpy.stopCallCount, 0)
     }
     
     func test_pausePomodoro_whenPomodoroIsRunning_shouldStopPomodoro() {
@@ -51,7 +54,7 @@ class PausePomodoroUseCaseTests: XCTestCase {
     // MARK: - Helpers
     func makeSut(seconds: TimeInterval) -> (PomodoroManager, PomodoroTimerSpy) {
         let timerSpy        = PomodoroTimerSpy(seconds: seconds)
-        let pomodoroManager = PomodoroManager(pomodoroTimer: timerSpy)
+        let pomodoroManager = PomodoroManager(pomodoroTimer: timerSpy, nextPomodoroType: PomodoroType.breakInterval)
         verifyMemoryLeak(pomodoroManager)
         return (pomodoroManager, timerSpy)
     }

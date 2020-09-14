@@ -1,43 +1,34 @@
 //
-//  StopPomodoroUseCaseTests.swift
+//  FinishPomodoroUseCaseTests.swift
 //  MyPomodoroTests
 //
 //  Created by Thiago Ramos on 30/08/20.
 //
-
 import XCTest
 @testable import MyPomodoro
 
-final class ResetPomodoroUseCaseTests: XCTestCase {
+final class FinishPomodoroUseCaseTests: XCTestCase {
     
-    func test_resetPomodoro_shouldCallResetOnTimer() {
+    func test_finishPomodoro_shouldReturnNewBreakPomodoro() {
         let (sut, timerSpy) = makeSut(seconds: 5)
         let exp = expectation(description: "When pomodoro is counting down")
         exp.expectedFulfillmentCount = 1
-        
-        sut.start { _ in
-        } receivingValue: { _ in
+
+        sut.start { pomodoroType in
+            XCTAssertEqual(pomodoroType, PomodoroType.breakInterval)
             exp.fulfill()
-            sut.reset()
+        } receivingValue: { _ in
         }
-                
+
         wait(for: [exp], timeout: 1.0)
-        
+
         XCTAssertEqual(timerSpy.resetCallCount, 1)
     }
     
-    func test_resetPomodoro_whenPomodoroIsAlreadyStopped_doNothing() {
-        let (sut, timerSpy) = makeSut(seconds: 5)
-
-        sut.reset()
-        
-        XCTAssertEqual(timerSpy.resetCallCount, 0)
-    }
-        
     // MARK: - Helpers
     func makeSut(seconds: TimeInterval) -> (PomodoroManager, PomodoroTimerSpy) {
         let timerSpy        = PomodoroTimerSpy(seconds: seconds)
-        let pomodoroManager = PomodoroManager(pomodoroTimer: timerSpy)
+        let pomodoroManager = PomodoroManager(pomodoroTimer: timerSpy, nextPomodoroType: PomodoroType.breakInterval)
         verifyMemoryLeak(pomodoroManager)
         return (pomodoroManager, timerSpy)
     }
@@ -49,3 +40,4 @@ final class ResetPomodoroUseCaseTests: XCTestCase {
     }
 
 }
+

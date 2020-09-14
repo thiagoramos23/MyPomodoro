@@ -8,7 +8,7 @@
 import Foundation
 
 protocol Manager {
-    typealias CompletionHandler = (TimeInterval) -> Void
+    typealias CompletionHandler = (PomodoroType) -> Void
     typealias ReceivingValueHandler = (TimeInterval) -> Void
 
     func start(completion: @escaping CompletionHandler, receivingValue: @escaping ReceivingValueHandler)
@@ -19,9 +19,11 @@ protocol Manager {
 public final class PomodoroManager: Manager {
     private var pomodoroTimer: CountdownTimer
     private var pomodoro: Pomodoro = Pomodoro(state: .stopped)
+    private var nextPomodoroType: PomodoroType
     
-    init(pomodoroTimer: CountdownTimer) {
-        self.pomodoroTimer = pomodoroTimer
+    init(pomodoroTimer: CountdownTimer, nextPomodoroType: PomodoroType) {
+        self.pomodoroTimer    = pomodoroTimer
+        self.nextPomodoroType = nextPomodoroType
     }
     
     func pause() {
@@ -42,7 +44,8 @@ public final class PomodoroManager: Manager {
         self.pomodoro = self.pomodoro.start()
         self.pomodoroTimer.countdown { timeInterval in
             if timeInterval == 0 {
-                completion(timeInterval)
+                completion(self.nextPomodoroType)
+                self.reset()
             } else {
                 receivingValue(timeInterval)
             }

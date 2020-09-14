@@ -26,7 +26,8 @@ extension MyPomodoroApp {
                     counter: Counter(
                         interval: 1
                     )
-                )
+                ),
+                nextPomodoroType: PomodoroType.breakInterval
             )
         )
     }
